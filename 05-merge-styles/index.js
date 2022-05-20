@@ -1,0 +1,17 @@
+const fs = require('fs');
+const path = require('path');
+const stylesPath = path.join(__dirname, 'styles');
+const mainPath = path.join(__dirname, 'project-dist');
+const output = fs.createWriteStream(path.join(mainPath, 'bundle.css'));
+fs.readdir(stylesPath, (err, files) => {
+  if (err) throw err;
+  for (let i = 0; i < files.length; i++) {
+    let extension = path.extname(files[i]).split('.').pop();
+    if (extension === 'css') {
+      const input = fs.createReadStream(path.join(stylesPath, files[i]));
+      input.on('data', data => {
+        output.write(data.toString() + '\n');
+      });
+    }
+  }
+});
