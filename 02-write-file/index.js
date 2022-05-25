@@ -1,28 +1,23 @@
-const path = require('path');
-const readline = require('readline');
 const fs = require('fs');
-const {
-  stdin,
-  stdout,
-  stdin: input,
-  stdout: output,
-  exit} = require('process');
-const stream = fs.createWriteStream(path.join(__dirname, 'result.txt'));
+const readline = require('readline');
+const { stdin: input, stdout: output } = require('process');
+const path = require('path');
+
+const fileLocation = path.join(__dirname, 'text.txt');
+
 const rl = readline.createInterface({ input, output });
-stdout.write('Hi, ask your question...\n');
-stdin.on('data', message => {
-  if (message.toString().trim() === 'exit') {
-    close();
+const writeStream = fs.createWriteStream(fileLocation, 'utf8');
+console.log('Hi! Ask your question:');
+rl.on('line', (input) => {
+  if(input !== 'exit') {
+    writeStream.write(`${input}\n`);
   } else {
-    stream.write(message);
+    console.log('Goodbye!');
+    rl.close();
   }
 });
+
 rl.on('SIGINT', () => {
-  console.log('Goodbye! Exit of program by `Ctrl + C`');
+  console.log('Goodbye!');
   rl.close();
 });
-function close () {
-  stdout.write('Thanks you, goodbye');
-  exit();
-}
-
